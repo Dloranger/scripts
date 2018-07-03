@@ -27,7 +27,11 @@ PHP_INI="/etc/php/7.0/fpm/php.ini"
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
+# if INSTALL_SVXLINK_TRUNK is set to "NO"
 SVXLINK_VER="17.12.2"
+INSTALL_SVXLINK_TRUNK="YES"
+SVXLINK_OPEN_PULL_REQUESTS=( "359" "377" )
+
 
 ################################################################################
 #
@@ -60,10 +64,12 @@ check_internet
 
 ### SVXLINK FUNCTIONS ###
 install_svxlink_source
-fix_svxlink_gpio
-install_svxlink_sounds
-enable_i2c
-config_ics_controllers
+svxlink_include_open_pull_requests
+#fix_svxlink_gpio
+#install_svxlink_sounds
+#enable_i2c
+#config_ics_controllers
+
 
 ### OPEN REPEATER FUCNTIONS ###
 # install_webserver

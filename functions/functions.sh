@@ -93,7 +93,19 @@ function check_network {
 # }
 
 ################################################################################
-
+function svxlink_include_open_pull_requests {
+	echo "--------------------------------------------------------------"
+	echo " Including svxlink open pull requests"
+	echo "--------------------------------------------------------------"
+	for i in "${SVXLINK_OPEN_PULL_REQUESTS[@]}"
+		do
+		: 
+		echo $i
+		#pull the change from svxlink github
+		#git pull/$i/head
+	done
+	
+}
 function install_svxlink_source {
 	echo "--------------------------------------------------------------"
 	echo " Compile/Install SVXLink from Source Code (ver $SVXLINK_VER)"
@@ -104,7 +116,7 @@ function install_svxlink_source {
 	# Install required packages
  	apt update
 	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
-		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
+		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen git \
 		groff alsa-utils vorbis-tools curl
 
 	# Add svxlink user and add to user groups
@@ -113,24 +125,28 @@ function install_svxlink_source {
 
 	# Download and compile from source
 	cd "/root"
-	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
-	tar xvzf svxlink-source.tar.gz
-	cd svxlink-$SVXLINK_VER/src
+	if [ $INSTALL_SVXLINK_TRUNK -ne "YES" ]; then
+		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
+		tar xvzf svxlink-source.tar.gz
+		cd svxlink-$SVXLINK_VER/src
+	else
+		git clone https://github.com/sm0svx/svxlink
+	fi
 	mkdir build
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no ..	
-	make
-	make doc
-	make install
-	ldconfig
+	#cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no ..	
+	#make
+	#make doc
+	#make install
+	#ldconfig
 
  	# Enable/Disable Services
-	systemctl enable svxlink
-	systemctl disable remotetrx
+	#systemctl enable svxlink
+	#systemctl disable remotetrx
 
 	# Clean Up
-	rm /root/svxlink-source.tar.gz
-	rm /root/svxlink-$SVXLINK_VER -R
+	#rm /root/svxlink-source.tar.gz
+	#rm /root/svxlink-$SVXLINK_VER -R
 }
 
 ################################################################################
